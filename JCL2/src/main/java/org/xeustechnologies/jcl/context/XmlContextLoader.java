@@ -28,6 +28,8 @@ package org.xeustechnologies.jcl.context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,7 +37,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.log4j.Logger;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 import org.w3c.dom.Document;
@@ -85,7 +86,7 @@ public class XmlContextLoader implements JclContextLoader {
 
     private final List<PathResolver> pathResolvers = new ArrayList<PathResolver>();
 
-    private static Logger logger = Logger.getLogger( XmlContextLoader.class );
+    private static Logger logger = Logger.getLogger( XmlContextLoader.class.getName() );
 
     public XmlContextLoader(String file) {
         this.file = file;
@@ -143,8 +144,8 @@ public class XmlContextLoader implements JclContextLoader {
 
                 jclContext.addJcl( name, jcl );
 
-                if( logger.isDebugEnabled() )
-                    logger.debug( "JarClassLoader[" + name + "] loaded into context." );
+                if( logger.isLoggable( Level.FINER ) )
+                    logger.finer( "JarClassLoader[" + name + "] loaded into context." );
             }
 
         } catch (SAXParseException e) {
@@ -252,8 +253,8 @@ public class XmlContextLoader implements JclContextLoader {
             }
         }
 
-        if( logger.isTraceEnabled() )
-            logger.trace( "Loader[" + loader.getClass().getName() + "] configured: [" + loader.getOrder() + ", "
+        if( logger.isLoggable( Level.FINER ) )
+            logger.finer( "Loader[" + loader.getClass().getName() + "] configured: [" + loader.getOrder() + ", "
                     + loader.isEnabled() + "]" );
     }
 

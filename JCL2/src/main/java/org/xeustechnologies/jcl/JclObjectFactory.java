@@ -28,8 +28,9 @@ package org.xeustechnologies.jcl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.xeustechnologies.jcl.exception.JclException;
 
 /**
@@ -43,7 +44,7 @@ import org.xeustechnologies.jcl.exception.JclException;
 public class JclObjectFactory {
     private static JclObjectFactory jclObjectFactory = new JclObjectFactory();
     private static boolean autoProxy;
-    private Logger logger = Logger.getLogger( JclObjectFactory.class );
+    private final Logger logger = Logger.getLogger( JclObjectFactory.class.getName() );
 
     /**
      * private constructor
@@ -228,9 +229,9 @@ public class JclObjectFactory {
                 }
             }
 
-            if( logger.isDebugEnabled() ) {
-                logger.debug( "Class: " + superClass );
-                logger.debug( "Class Interfaces: " + il );
+            if( logger.isLoggable( Level.FINER ) ) {
+                logger.finer( "Class: " + superClass );
+                logger.finer( "Class Interfaces: " + il );
             }
 
             if( superClass == null && il.size() == 0 ) {

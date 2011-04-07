@@ -27,13 +27,15 @@
 package org.xeustechnologies.jcl;
 
 import java.io.InputStream;
+import java.security.SecureClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.xeustechnologies.jcl.exception.JclException;
 import org.xeustechnologies.jcl.exception.ResourceNotFoundException;
 import org.xeustechnologies.jcl.utils.Utils;
@@ -45,7 +47,7 @@ import org.xeustechnologies.jcl.utils.Utils;
  * 
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractClassLoader extends ClassLoader {
+public abstract class AbstractClassLoader extends SecureClassLoader {
 
     protected final List<ProxyClassLoader> loaders = new ArrayList<ProxyClassLoader>();
 
@@ -160,7 +162,7 @@ public abstract class AbstractClassLoader extends ClassLoader {
      */
     class SystemLoader extends ProxyClassLoader {
 
-        private final Logger logger = Logger.getLogger( SystemLoader.class );
+        private final Logger logger = Logger.getLogger( SystemLoader.class.getName() );
 
         public SystemLoader() {
             order = 5;
@@ -177,8 +179,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
                 return null;
             }
 
-            if( logger.isTraceEnabled() )
-                logger.trace( "Returning system class " + className );
+            if( logger.isLoggable( Level.FINEST ) )
+                logger.finest( "Returning system class " + className );
 
             return result;
         }
@@ -188,8 +190,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
             InputStream is = getSystemResourceAsStream( name );
 
             if( is != null ) {
-                if( logger.isTraceEnabled() )
-                    logger.trace( "Returning system resource " + name );
+                if( logger.isLoggable( Level.FINEST ) )
+                    logger.finer( "Returning system resource " + name );
 
                 return is;
             }
@@ -203,7 +205,7 @@ public abstract class AbstractClassLoader extends ClassLoader {
      * 
      */
     class ParentLoader extends ProxyClassLoader {
-        private final Logger logger = Logger.getLogger( ParentLoader.class );
+        private final Logger logger = Logger.getLogger( ParentLoader.class.getName() );
 
         public ParentLoader() {
             order = 3;
@@ -220,8 +222,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
                 return null;
             }
 
-            if( logger.isTraceEnabled() )
-                logger.trace( "Returning class " + className + " loaded with parent classloader" );
+            if( logger.isLoggable( Level.FINEST ) )
+                logger.finer( "Returning class " + className + " loaded with parent classloader" );
 
             return result;
         }
@@ -231,8 +233,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
             InputStream is = getParent().getResourceAsStream( name );
 
             if( is != null ) {
-                if( logger.isTraceEnabled() )
-                    logger.trace( "Returning resource " + name + " loaded with parent classloader" );
+                if( logger.isLoggable( Level.FINEST ) )
+                    logger.finer( "Returning resource " + name + " loaded with parent classloader" );
 
                 return is;
             }
@@ -246,7 +248,7 @@ public abstract class AbstractClassLoader extends ClassLoader {
      * 
      */
     class CurrentLoader extends ProxyClassLoader {
-        private final Logger logger = Logger.getLogger( CurrentLoader.class );
+        private final Logger logger = Logger.getLogger( CurrentLoader.class.getName() );
 
         public CurrentLoader() {
             order = 2;
@@ -263,8 +265,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
                 return null;
             }
 
-            if( logger.isTraceEnabled() )
-                logger.trace( "Returning class " + className + " loaded with current classloader" );
+            if( logger.isLoggable( Level.FINEST ) )
+                logger.finer( "Returning class " + className + " loaded with current classloader" );
 
             return result;
         }
@@ -274,8 +276,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
             InputStream is = getClass().getClassLoader().getResourceAsStream( name );
 
             if( is != null ) {
-                if( logger.isTraceEnabled() )
-                    logger.trace( "Returning resource " + name + " loaded with current classloader" );
+                if( logger.isLoggable( Level.FINEST ) )
+                    logger.finer( "Returning resource " + name + " loaded with current classloader" );
 
                 return is;
             }
@@ -290,7 +292,7 @@ public abstract class AbstractClassLoader extends ClassLoader {
      * 
      */
     class ThreadContextLoader extends ProxyClassLoader {
-        private final Logger logger = Logger.getLogger( ThreadContextLoader.class );
+        private final Logger logger = Logger.getLogger( ThreadContextLoader.class.getName() );
 
         public ThreadContextLoader() {
             order = 4;
@@ -306,8 +308,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
                 return null;
             }
 
-            if( logger.isTraceEnabled() )
-                logger.trace( "Returning class " + className + " loaded with thread context classloader" );
+            if( logger.isLoggable( Level.FINEST ) )
+                logger.finer( "Returning class " + className + " loaded with thread context classloader" );
 
             return result;
         }
@@ -317,8 +319,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream( name );
 
             if( is != null ) {
-                if( logger.isTraceEnabled() )
-                    logger.trace( "Returning resource " + name + " loaded with thread context classloader" );
+                if( logger.isLoggable( Level.FINEST ) )
+                    logger.finer( "Returning resource " + name + " loaded with thread context classloader" );
 
                 return is;
             }
@@ -333,7 +335,7 @@ public abstract class AbstractClassLoader extends ClassLoader {
      * 
      */
     public final class OsgiBootLoader extends ProxyClassLoader {
-        private final Logger logger = Logger.getLogger( OsgiBootLoader.class );
+        private final Logger logger = Logger.getLogger( OsgiBootLoader.class.getName() );
         private boolean strictLoading;
         private String[] bootDelagation;
 
@@ -358,8 +360,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
                             + " not found." ) );
                 }
 
-                if( logger.isTraceEnabled() )
-                    logger.trace( "Class " + className + " loaded via OSGi boot delegation." );
+                if( logger.isLoggable( Level.FINEST ) )
+                    logger.finer( "Class " + className + " loaded via OSGi boot delegation." );
             }
 
             return clazz;
@@ -376,8 +378,8 @@ public abstract class AbstractClassLoader extends ClassLoader {
                     throw new ResourceNotFoundException( "JCL OSGi Boot Delegation: Resource " + name + " not found." );
                 }
 
-                if( logger.isTraceEnabled() )
-                    logger.trace( "Resource " + name + " loaded via OSGi boot delegation." );
+                if( logger.isLoggable( Level.FINER ) )
+                    logger.finer( "Resource " + name + " loaded via OSGi boot delegation." );
             }
 
             return is;

@@ -37,8 +37,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.xeustechnologies.jcl.exception.JclException;
 
 /**
@@ -52,7 +53,7 @@ public class JarResources {
     protected Map<String, byte[]> jarEntryContents;
     protected boolean collisionAllowed;
 
-    private static Logger logger = Logger.getLogger( JarResources.class );
+    private static Logger logger = Logger.getLogger( JarResources.class.getName() );
 
     /**
      * Default constructor
@@ -85,8 +86,8 @@ public class JarResources {
      * @param jarFile
      */
     public void loadJar(String jarFile) {
-        if( logger.isTraceEnabled() )
-            logger.trace( "Loading jar: " + jarFile );
+        if( logger.isLoggable( Level.FINER ) )
+            logger.finer( "Loading jar: " + jarFile );
 
         FileInputStream fis = null;
         try {
@@ -110,8 +111,8 @@ public class JarResources {
      * @param url
      */
     public void loadJar(URL url) {
-        if( logger.isTraceEnabled() )
-            logger.trace( "Loading jar: " + url.toString() );
+        if( logger.isLoggable( Level.FINER ) )
+            logger.finer( "Loading jar: " + url.toString() );
 
         InputStream in = null;
         try {
@@ -143,9 +144,9 @@ public class JarResources {
             jis = new JarInputStream( bis );
 
             JarEntry jarEntry = null;
-            while (( jarEntry = jis.getNextJarEntry() ) != null) {
-                if( logger.isTraceEnabled() )
-                    logger.trace( dump( jarEntry ) );
+            while(( jarEntry = jis.getNextJarEntry() ) != null) {
+                if( logger.isLoggable( Level.FINEST ) )
+                    logger.finest( dump( jarEntry ) );
 
                 if( jarEntry.isDirectory() ) {
                     continue;
@@ -155,30 +156,30 @@ public class JarResources {
                     if( !collisionAllowed )
                         throw new JclException( "Class/Resource " + jarEntry.getName() + " already loaded" );
                     else {
-                        if( logger.isTraceEnabled() )
+                        if( logger.isLoggable( Level.FINER ) )
                             logger
-                                    .trace( "Class/Resource " + jarEntry.getName()
+                                    .finer( "Class/Resource " + jarEntry.getName()
                                             + " already loaded; ignoring entry..." );
                         continue;
                     }
                 }
 
-                if( logger.isTraceEnabled() )
-                    logger.trace( "Entry Name: " + jarEntry.getName() + ", " + "Entry Size: " + jarEntry.getSize() );
+                if( logger.isLoggable( Level.FINER ) )
+                    logger.finer( "Entry Name: " + jarEntry.getName() + ", " + "Entry Size: " + jarEntry.getSize() );
 
                 byte[] b = new byte[2048];
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
 
                 int len = 0;
-                while (( len = jis.read( b ) ) > 0) {
+                while(( len = jis.read( b ) ) > 0) {
                     out.write( b, 0, len );
                 }
 
                 // add to internal resource HashMap
                 jarEntryContents.put( jarEntry.getName(), out.toByteArray() );
 
-                if( logger.isTraceEnabled() )
-                    logger.trace( jarEntry.getName() + ": size=" + out.size() + " ,csize="
+                if( logger.isLoggable( Level.FINER ) )
+                    logger.finer( jarEntry.getName() + ": size=" + out.size() + " ,csize="
                             + jarEntry.getCompressedSize() );
 
                 out.close();
@@ -186,8 +187,8 @@ public class JarResources {
         } catch (IOException e) {
             throw new JclException( e );
         } catch (NullPointerException e) {
-            if( logger.isTraceEnabled() )
-                logger.trace( "Done loading." );
+            if( logger.isLoggable( Level.FINER ) )
+                logger.finer( "Done loading." );
         } finally {
             if( jis != null )
                 try {

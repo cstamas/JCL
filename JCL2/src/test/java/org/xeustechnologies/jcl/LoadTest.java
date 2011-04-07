@@ -7,11 +7,11 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.internal.runners.JUnit4ClassRunner;
@@ -29,7 +29,7 @@ import org.xeustechnologies.jcl.test.TestInterface;
 @RunWith(JUnit4ClassRunner.class)
 public class LoadTest extends TestCase {
 
-    private static Logger logger = Logger.getLogger( LoadTest.class );
+    private static Logger logger = Logger.getLogger( LoadTest.class.getName() );
 
     @Test
     public void testWithResourceName() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -49,9 +49,6 @@ public class LoadTest extends TestCase {
         JarClassLoader jc = new JarClassLoader( new String[] { "./target/test-jcl.jar" } );
 
         InputStream is = jc.getResourceAsStream( "test/test.properties" );
-
-        if( logger.isDebugEnabled() )
-            logger.debug( is );
 
         assertNotNull( is );
     }

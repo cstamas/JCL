@@ -19,6 +19,7 @@
 	<modules>
 		<module>test-jar</module>
 		<module>core</module>
+        <module>web</module>
 		<module>spring</module>
 		<module>test-web</module>
 	</modules>
@@ -210,12 +211,6 @@
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
 			<version>1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>

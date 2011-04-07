@@ -120,14 +120,6 @@ public class LoadTest extends TestCase {
 
         assertNotNull( ti );
 
-        // ti = JclUtils.cast( testObj );
-        //
-        // assertNotNull( ti );
-        //
-        // ti = (TestInterface) JclUtils.toCastable( testObj );
-        //
-        // assertNotNull( ti );
-
         ti = (TestInterface) JclUtils.toCastable( testObj, TestInterface.class );
 
         assertNotNull( ti );
@@ -137,7 +129,11 @@ public class LoadTest extends TestCase {
         assertNotNull( ti );
 
         // Deep clone.
-        ti = (TestInterface) JclUtils.deepClone( testObj );
+        try {
+            ti = (TestInterface) JclUtils.deepClone( testObj );
+        } catch (ClassCastException e) {
+            // expected
+        }
 
         assertNotNull( ti );
     }

@@ -156,7 +156,9 @@ public class XmlContextLoader implements JclContextLoader {
         } catch (JclContextException e) {
             throw e;
         } catch (Exception e) {
-            throw new JclContextException( e );
+            JclContextException jcle = new JclContextException( e );
+            jcle.setStackTrace( e.getStackTrace() );
+            throw jcle;
         }
     }
 
